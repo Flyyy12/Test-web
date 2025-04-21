@@ -3,71 +3,98 @@
 <head>
   <meta charset="UTF-8">
   <title>Donasi untuk FLYYS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: auto;
-      padding: 50px 20px;
-      background: #f0f0f0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #1abc9c, #16a085);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
     }
     h2 {
-      text-align: center;
+      margin-bottom: 20px;
       color: #2c3e50;
     }
-    form {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-    input, textarea, button {
+    img.qris {
       width: 100%;
-      margin-top: 12px;
-      padding: 10px;
+      max-width: 250px;
+      border-radius: 12px;
+      margin: 10px auto 20px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
       font-size: 16px;
-      border-radius: 8px;
+      border-radius: 10px;
       border: 1px solid #ccc;
     }
     button {
-      background: #2ecc71;
+      background: #1abc9c;
       color: white;
+      padding: 12px;
       border: none;
+      border-radius: 10px;
+      font-size: 16px;
       cursor: pointer;
+      margin-top: 10px;
       transition: background 0.3s;
     }
     button:hover {
-      background: #27ae60;
+      background: #16a085;
+    }
+    .note {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #666;
     }
   </style>
 </head>
 <body>
-  <h2>Form Donasi untuk FLYYS</h2>
-  <form id="donationForm">
-    <input type="text" name="name" placeholder="Nama kamu" required>
-    <input type="number" name="amount" placeholder="Jumlah donasi (Rp)" required>
-    <textarea name="comment" placeholder="Komentar (opsional)"></textarea>
-    <button type="submit">Kirim Donasi</button>
-  </form>
+  <div class="container">
+    <h2>Donasi untuk FLYYS</h2>
+    <p>Scan QRIS di bawah ini untuk mengirim donasi:</p>
+    <img src="https://imgur.com/a/HBFYgsx" alt="QRIS" class="qris">
+
+    <form id="donationForm">
+      <input type="text" name="name" placeholder="Nama kamu" required>
+      <textarea name="comment" placeholder="Komentar atau pesan..." required></textarea>
+      <button type="submit">Saya Sudah Donasi</button>
+    </form>
+
+    <p class="note">Setelah transfer, isi nama & komentar lalu klik “Saya Sudah Donasi” agar masuk ke Discord!</p>
+  </div>
 
   <script>
     document.getElementById('donationForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const form = e.target;
       const name = form.name.value;
-      const amount = form.amount.value;
-      const comment = form.comment.value || '-';
+      const comment = form.comment.value;
 
       const embed = {
-        username: "Donasi Bot",
+        username: "Donasi FLYYS",
         embeds: [{
-          title: "💸 Donasi Baru Masuk!",
-          color: 0x00cc99,
+          title: "💸 Donasi Masuk via QRIS!",
+          color: 0x1abc9c,
           fields: [
             { name: "👤 Nama", value: name, inline: true },
-            { name: "💰 Jumlah", value: `Rp${amount}`, inline: true },
-            { name: "📝 Komentar", value: comment }
+            { name: "📝 Komentar", value: comment || "-" }
           ],
+          footer: { text: "QRIS Donation" },
           timestamp: new Date()
         }]
       };
@@ -78,7 +105,7 @@
         body: JSON.stringify(embed)
       });
 
-      alert("Donasi berhasil dikirim!");
+      alert("Terima kasih! Donasimu berhasil dicatat 🙏");
       form.reset();
     });
   </script>
