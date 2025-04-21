@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Donasi untuk FLYYS</title>
+  <style>
+    body { font-family: sans-serif; max-width: 500px; margin: auto; padding-top: 40px; }
+    input, textarea { width: 100%; margin: 10px 0; padding: 8px; }
+    button { padding: 10px 20px; cursor: pointer; background: #4CAF50; color: white; border: none; }
+  </style>
+</head>
+<body>
+  <h2>Form Donasi</h2>
+  <form id="donationForm">
+    <input type="text" name="name" placeholder="Nama" required><br>
+    <input type="number" name="amount" placeholder="Jumlah (Rp)" required><br>
+    <textarea name="comment" placeholder="Komentar"></textarea><br>
+    <button type="submit">Kirim Donasi</button>
+  </form>
+
+  <script>
+    document.getElementById('donationForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        name: form.name.value,
+        amount: form.amount.value,
+        comment: form.comment.value
+      };
+
+      await fetch('https://your-backend-url.com/donate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      alert('Donasi berhasil dikirim!');
+      form.reset();
+    });
+  </script>
+</body>
+</html>
