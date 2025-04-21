@@ -34,7 +34,7 @@
       border-radius: 12px;
       margin: 10px auto 20px;
     }
-    input, textarea {
+    input, textarea, button {
       width: 100%;
       padding: 12px;
       margin: 10px 0;
@@ -45,12 +45,8 @@
     button {
       background: #1abc9c;
       color: white;
-      padding: 12px;
       border: none;
-      border-radius: 10px;
-      font-size: 16px;
       cursor: pointer;
-      margin-top: 10px;
       transition: background 0.3s;
     }
     button:hover {
@@ -66,26 +62,37 @@
 <body>
   <div class="container">
     <h2>Donasi untuk FLYYS</h2>
-    <p>Scan QRIS di bawah ini untuk mengirim donasi:</p>
-    <img src="https://imgur.com/a/HBFYgsx" alt="QRIS" class="qris">
+    <p>Scan QRIS berikut untuk transfer:</p>
+    <img src="https://i.imgur.com/yYBRuFc.jpeg" alt="QRIS" class="qris">
 
     <form id="donationForm">
       <input type="text" name="name" placeholder="Nama kamu" required>
       <textarea name="comment" placeholder="Komentar atau pesan..." required></textarea>
+      <input type="file" name="proof" accept="image/*" required>
       <button type="submit">Saya Sudah Donasi</button>
     </form>
 
-    <p class="note">Setelah transfer, isi nama & komentar lalu klik “Saya Sudah Donasi” agar masuk ke Discord!</p>
+    <p class="note">Setelah transfer, isi data dan upload bukti transfer. Donasi akan masuk ke Discord 💚</p>
   </div>
 
   <script>
+    const webhookURL = "https://discordapp.com/api/webhooks/1363888925189345390/EbU3A6rIVYtr8xNiI-L-RFMsEMcZCh2cex6hGnAjaA-nghFpuram1wdHk8Jekz7CyMC7";
+
     document.getElementById('donationForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const form = e.target;
       const name = form.name.value;
       const comment = form.comment.value;
+      const file = form.proof.files[0];
 
-      const embed = {
+      if (!file) {
+        alert("Mohon upload bukti transfer.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('payload_json', JSON.stringify({
         username: "Donasi FLYYS",
         embeds: [{
           title: "💸 Donasi Masuk via QRIS!",
@@ -94,19 +101,28 @@
             { name: "👤 Nama", value: name, inline: true },
             { name: "📝 Komentar", value: comment || "-" }
           ],
+          image: { url: "attachment://" + file.name },
           footer: { text: "QRIS Donation" },
           timestamp: new Date()
         }]
-      };
+      }));
 
-      await fetch("https://discordapp.com/api/webhooks/1363888925189345390/EbU3A6rIVYtr8xNiI-L-RFMsEMcZCh2cex6hGnAjaA-nghFpuram1wdHk8Jekz7CyMC7", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(embed)
-      });
+      try {
+        const res = await fetch(webhookURL, {
+          method: "POST",
+          body: formData
+        });
 
-      alert("Terima kasih! Donasimu berhasil dicatat 🙏");
-      form.reset();
+        if (res.ok) {
+          alert("Terima kasih! Donasimu berhasil dicatat 🙏");
+          form.reset();
+        } else {
+          alert("Gagal mengirim donasi. Coba lagi ya.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Terjadi kesalahan.");
+      }
     });
   </script>
 </body>
